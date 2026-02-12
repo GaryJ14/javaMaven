@@ -1,0 +1,137 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASO 1 — Crear Ventana Principal
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Crea una nueva clase:
+
+Package:
+com.isma.crud.app
+
+New → Class → Nombre:
+MainFrame
+
+Código base mínimo:
+
+package com.isma.crud.app;
+
+import javax.swing.*;
+
+public class MainFrame extends JFrame {
+
+    public MainFrame() {
+        setTitle("Sistema CRUD - Usuarios y Tareas");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JButton btnUsuarios = new JButton("CRUD Usuarios");
+        JButton btnTareas = new JButton("CRUD Tareas");
+
+        JPanel panel = new JPanel();
+        panel.add(btnUsuarios);
+        panel.add(btnTareas);
+
+        add(panel);
+
+        setVisible(true);
+    }
+}
+
+
+Ahora modifica tu Main.java:
+
+package com.isma.crud.app;
+
+import javax.swing.SwingUtilities;
+
+public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new MainFrame());
+    }
+}
+
+
+Ejecuta:
+compile exec:java
+
+Ahora tienes tu primera ventana visual.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASO 2 — Crear Ventana CRUD Usuario
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Creamos una nueva clase:
+
+com.isma.crud.app.UsuarioFrame
+
+Ejemplo básico:
+
+package com.isma.crud.app;
+
+import com.isma.crud.dao.UsuarioDAO;
+import com.isma.crud.model.Usuario;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
+public class UsuarioFrame extends JFrame {
+
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private JTextArea area;
+
+    public UsuarioFrame() {
+
+        setTitle("CRUD Usuarios");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+
+        JTextField txtNombre = new JTextField(10);
+        JTextField txtEmail = new JTextField(10);
+        JTextField txtPassword = new JTextField(10);
+
+        JButton btnCrear = new JButton("Crear");
+        JButton btnListar = new JButton("Listar");
+
+        area = new JTextArea(10, 40);
+        JScrollPane scroll = new JScrollPane(area);
+
+        JPanel panel = new JPanel(new GridLayout(5,2));
+        panel.add(new JLabel("Nombre:"));
+        panel.add(txtNombre);
+        panel.add(new JLabel("Email:"));
+        panel.add(txtEmail);
+        panel.add(new JLabel("Password:"));
+        panel.add(txtPassword);
+        panel.add(btnCrear);
+        panel.add(btnListar);
+
+        add(panel, BorderLayout.NORTH);
+        add(scroll, BorderLayout.CENTER);
+
+        btnCrear.addActionListener(e -> {
+            Usuario u = new Usuario();
+            u.setNombre(txtNombre.getText());
+            u.setEmail(txtEmail.getText());
+            u.setPassword(txtPassword.getText());
+            usuarioDAO.crear(u);
+            JOptionPane.showMessageDialog(this, "Usuario creado");
+        });
+
+        btnListar.addActionListener(e -> {
+            List<Usuario> lista = usuarioDAO.listar();
+            area.setText("");
+            lista.forEach(u -> area.append(u + "\n"));
+        });
+
+        setVisible(true);
+    }
+}
+
+
+Luego en MainFrame modifica:
+
+btnUsuarios.addActionListener(e -> new UsuarioFrame());
+
+
+Ahora ya tienes CRUD visual básico.
